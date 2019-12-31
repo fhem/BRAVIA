@@ -30,6 +30,8 @@ package main;
 use strict;
 use warnings;
 
+use vars qw( $readingFnAttributes );
+
 ###################################
 sub BRAVIA_Initialize($) {
     my ($hash) = @_;
@@ -41,7 +43,7 @@ sub BRAVIA_Initialize($) {
     $hash->{DefFn}   = "BRAVIA::Define";
     $hash->{UndefFn} = "BRAVIA::Undefine";
 
-    $hash->{AttrList} = "disable:0,1 macaddr:textField channelsMax:textField " . $::readingFnAttributes;
+    $hash->{AttrList} = "disable:0,1 macaddr:textField channelsMax:textField " . $readingFnAttributes;
 
     $::data{RC_layout}{BRAVIA_SVG} = "BRAVIA::RClayout_SVG";
     $::data{RC_layout}{BRAVIA}     = "BRAVIA::RClayout";
@@ -1197,7 +1199,7 @@ sub ReceiveCommand($$$) {
 ###################################
 sub wake ($$) {
     my ( $name, $mac_addr ) = @_;
-    my $address = '255.255.255.255';
+    my $address = AttrVal($name, 'wolBroadcast', '255.255.255.255');
     my $port = 9;
 
     my $sock = new IO::Socket::INET( Proto => 'udp' )
@@ -1213,7 +1215,7 @@ sub wake ($$) {
     setsockopt( $sock, SOL_SOCKET, SO_BROADCAST, 1 )
       or die "setsockopt : $!";
 
-    Log3($name, 4, "BRAVIA $name: Waking up by sending Wake-On-Lan magic package to $mac_addr");
+    Log3($name, 4, "BRAVIA $name: Waking up by sending Wake-On-Lan magic packet to $mac_addr");
     send( $sock, $packet, 0, $sock_addr ) or die "send : $!";
     close($sock);
 
@@ -2288,7 +2290,9 @@ sub GetNormalizedName($) {
       <li><a name="channelsMax"></a><i>channelsMax</i><br>
         Maximum amount of channels to be displayed, default is 50.</li>
       <li><a name="macaddr"></a><i>macaddr</i><br>
-        Enables power on of TV using WOL.</li>
+        Enables power on of TV using Wake-On-Lan.</li>
+      <li><a name="wolBroadcast"></a><i>wolBroadcast</i><br>
+        Broadcast address for Wake-On-Lan magic packets, default is 255.255.255.255.</li>
     </ul>
   </ul>
 </ul>
@@ -2405,7 +2409,9 @@ sub GetNormalizedName($) {
       <li><a name="channelsMax"></a><i>channelsMax</i><br>
         Maximale Anzahl der im FHEMWEB angezeigten Kanäle. Der Standartwert ist 50.</li>
       <li><a name="macaddr"></a><i>macaddr</i><br>
-        Ermöglicht das Einschalten des TV per WOL.</li>
+        Ermöglicht das Einschalten des TV per Wake-On-Lan.</li>
+      <li><a name="wolBroadcast"></a><i>wolBroadcast</i><br>
+        Broadcast-Adresse für die Wake-On-Lan <i>Magic Packets</i>. Der Standartwert ist 255.255.255.255.</li>
     </ul>
   </ul>
 </ul>
