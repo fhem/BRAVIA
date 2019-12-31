@@ -19,7 +19,7 @@ You are invited to send pull requests to the dev branch whenever you think you c
 
 Load the modules into FHEM:
 
-    update all https://raw.githubusercontent.com/fhem/BRAVIA/master/controls_BRAVIA.txt
+    update all https://raw.githubusercontent.com/fhem/BRAVIA/dev/controls_BRAVIA.txt
 Restart FHEM:
     
     shutdown restart
