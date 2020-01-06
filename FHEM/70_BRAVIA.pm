@@ -1,4 +1,4 @@
-# $Id: 70_BRAVIA.pm 20287 2019-10-01 20:02:44Z vuffiraa $
+# $Id: 70_BRAVIA.pm 20868 2020-01-02 15:34:22Z vuffiraa $
 ##############################################################################
 #
 #     70_BRAVIA.pm
@@ -599,15 +599,15 @@ sub Set($@) {
 
         return "No 2nd argument given" if ( !defined( $a[2] ) );
 
-		    shift(@a); shift(@a);
-		    my $appStr;
+            shift(@a); shift(@a);
+            my $appStr;
 
         # Resolve app uri + data
         my $app_name;
         my $app_uri;
-		    my $app_data;
-		    while (@a) {
-		        my $arg = shift(@a);
+            my $app_data;
+            while (@a) {
+                my $arg = shift(@a);
             if (defined($appStr)) {
                 $appStr .= "#";
                 $appStr .= $arg;
@@ -619,7 +619,7 @@ sub Set($@) {
                 $app_uri  = $hash->{helper}{device}{appPreset}{ $appStr }{uri};
                 $app_data = join(" ", @a);
             }
-		    }
+            }
 
         return "Unknown app '" . $appStr . "' on that device." unless defined($app_uri);
 
@@ -750,8 +750,8 @@ sub Set($@) {
     elsif ( $a[1] eq "text" ) {
         return "No 2nd argument given" if ( !defined( $a[2] ) );
 
-		shift(@a); shift(@a);
-		my $text = join(" ", @a);
+        shift(@a); shift(@a);
+        my $text = join(" ", @a);
         Log3($name, 2, "BRAVIA set $name text $text");
         
         SendCommand( $hash, "text", $text );
@@ -2056,7 +2056,7 @@ sub GetRemotecontrolCommand($) {
         return $commands;
     }
     else {
-    		# return command itself if not mapped
+            # return command itself if not mapped
         return $command;
     }
 }
@@ -2263,7 +2263,7 @@ sub GetNormalizedName($) {
       <li><a name="stop"></a><i>stop</i><br>
         Stops recording, playing of an internal App, etc.</li>
       <li><a name="text"></a><i>text</i><br>
-      	Includes the given text into an input field on display.</li>
+        Includes the given text into an input field on display.</li>
       <li><a name="toggle"></a><i>toggle</i><br>
         Toggles power status of TV.</li>
       <li><a name="tvpause"></a><i>tvpause</i><br>
