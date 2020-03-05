@@ -1,4 +1,3 @@
-# $Id: 70_BRAVIA.pm 20868 2020-01-02 15:34:22Z vuffiraa $
 ##############################################################################
 #
 #     70_BRAVIA.pm
@@ -22,6 +21,10 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with fhem.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+#
+#     05.03.2020 Sandro Gertz: add "requestReboot"
 #
 ##############################################################################
 
@@ -204,7 +207,6 @@ sub Get($@) {
     return "argument is missing" if ( int(@a) < 2 );
 
     $what = $a[1];
-
     if ( $what =~ /^(power|presence|input|channel|volume|mute)$/ ) {
         my $value = ReadingsVal($name, $what, "");
         if ($value ne "") {
@@ -300,7 +302,7 @@ sub Set($@) {
     $usage .= " requestFormat:json,xml register";
     $usage .= ":noArg"
         if (ReadingsVal($name, "requestFormat", "") eq "xml");
-    $usage .= " statusRequest:noArg toggle:noArg on:noArg off:noArg tvpause:noarg play:noArg pause:noArg stop:noArg record:noArg upnp:on,off volume:slider,1,1,100 volumeUp:noArg volumeDown:noArg channelUp:noArg channelDown:noArg remoteControl";
+    $usage .= " requestReboot:noArg statusRequest:noArg toggle:noArg on:noArg off:noArg tvpause:noarg play:noArg pause:noArg stop:noArg record:noArg upnp:on,off volume:slider,1,1,100 volumeUp:noArg  volumeDown:noArg channelUp:noArg channelDown:noArg remoteControl";
     $usage .= " mute:" . $mutes;
     $usage .= " input:" . $inputs if ( $inputs ne "" );
     $usage .= " channel:$channels" if ( $channels ne "" );
@@ -745,7 +747,13 @@ sub Set($@) {
         readingsSingleUpdate( $hash, "upnp", $a[2], 1 )
            if ( ReadingsVal($name, "upnp", "") ne $a[2] );
     }
-    
+    	
+	# Reboot
+     elsif ($a[1] eq "requestReboot") {	
+      Log3($name, 2, "BRAVIA set $name " . $a[1] . " " . $a[2]);	 
+	  SendCommand( $hash, "requestReboot" );
+	}
+		
     # text
     elsif ( $a[1] eq "text" ) {
         return "No 2nd argument given" if ( !defined( $a[2] ) );
@@ -756,6 +764,8 @@ sub Set($@) {
         
         SendCommand( $hash, "text", $text );
     }
+
+
 
     # return usage hint
     else {
@@ -943,6 +953,12 @@ sub SendCommand($$;$$@) {
         $URL .= "/sony/appControl";
         $data = "{\"id\":2,\"method\":\"setTextForm\",\"version\":\"1.0\",\"params\":[\"".$cmd."\"]}";
       }
+    } elsif ($service eq "requestReboot") {		
+	  $URL .= $port->{SERVICE};
+	  if ($requestFormat eq "json") {
+		$URL .= "/sony/system";
+		$data = "{\"method\":\"requestReboot\",\"params\":[],\"id\":10,\"version\":\"1.0\"}";
+	  }
     } else {
       $URL .= $port->{SERVICE};
       if ($requestFormat eq "json") {
@@ -957,6 +973,11 @@ sub SendCommand($$;$$@) {
         }
       }
     }
+	
+	
+
+	
+	
 
     $timeout = AttrVal($name, "timeout", 0);
     if ($timeout !~ /^\d+$/ or $timeout == 0) {
