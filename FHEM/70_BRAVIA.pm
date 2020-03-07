@@ -2266,6 +2266,9 @@ sub GetNormalizedName($) {
       <li><a name="requestFormat"></a><i>requestFormat</i><br>
         "xml" for xml based communication (models from 2011 and 2012)<br>
         "json" for communication with models from 2013 and newer</li>
+      <li><a name="requestReboot"></a><i>requestReboot</i><br>
+        Reboots the TV immediately.
+        This Feature is available on models from 2013 and newer.</li>
       <li><a name="remoteControl"></a><i>remoteControl</i><br>
         Sends command directly to TV.</li>
       <li><a name="statusRequest"></a><i>statusRequest</i><br>
@@ -2347,7 +2350,7 @@ sub GetNormalizedName($) {
     <ul>
       <li><a name="application"></a><i>application</i><br>
         Liste der Anwendungen.
-        Anwenungen sind ab Modelljahr 2013 verfügbar.</li>
+        Anwendungen sind ab Modelljahr 2013 verfügbar.</li>
       <li><a name="channel"></a><i>channel</i><br>
         Liste aller bekannten Kanäle. Das Modul merkt sich alle aufgerufenen Kanäle.
         Ab Modelljahr 2013 werden die Kanäle automatisch geladen
@@ -2385,6 +2388,9 @@ sub GetNormalizedName($) {
       <li><a name="requestFormat"></a><i>requestFormat</i><br>
         "xml" für xml-basierte Kommunikation 2011er/2012er Geräte<br>
         "json" für die Kommunikation seit der 2013er Generation</li>
+      <li><a name="requestReboot"></a><i>requestReboot</i><br>
+        Startet den TV direkt neu.
+        Diese Funktion ist ab Modelljahr 2013 verfügbar.</li>
       <li><a name="remoteControl"></a><i>remoteControl</i><br>
         Direktes Senden von Kommandos an den TV.</li>
       <li><a name="statusRequest"></a><i>statusRequest</i><br>
