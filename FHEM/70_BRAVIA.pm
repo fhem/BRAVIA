@@ -1,3 +1,4 @@
+# $Id: 70_BRAVIA.pm 20868 2020-01-02 15:34:22Z vuffiraa $
 ##############################################################################
 #
 #     70_BRAVIA.pm
@@ -302,12 +303,13 @@ sub Set($@) {
     $usage .= " requestFormat:json,xml register";
     $usage .= ":noArg"
         if (ReadingsVal($name, "requestFormat", "") eq "xml");
-    $usage .= " requestReboot:noArg statusRequest:noArg toggle:noArg on:noArg off:noArg tvpause:noarg play:noArg pause:noArg stop:noArg record:noArg upnp:on,off volume:slider,1,1,100 volumeUp:noArg  volumeDown:noArg channelUp:noArg channelDown:noArg remoteControl";
+    $usage .= " statusRequest:noArg toggle:noArg on:noArg off:noArg tvpause:noarg play:noArg pause:noArg stop:noArg record:noArg upnp:on,off volume:slider,1,1,100 volumeUp:noArg volumeDown:noArg channelUp:noArg channelDown:noArg remoteControl";
     $usage .= " mute:" . $mutes;
     $usage .= " input:" . $inputs if ( $inputs ne "" );
     $usage .= " channel:$channels" if ( $channels ne "" );
     $usage .= " openUrl application:" . $apps if ( $apps ne "" );
     $usage .= " text" if (ReadingsVal($name, "requestFormat", "") eq "json");
+    $usage .= " requestReboot:noArg " if (ReadingsVal($name, "requestFormat", "") eq "json");
 
     my $cmd = '';
     my $result;
@@ -748,11 +750,11 @@ sub Set($@) {
            if ( ReadingsVal($name, "upnp", "") ne $a[2] );
     }
     	
-	# Reboot
-     elsif ($a[1] eq "requestReboot") {	
-      Log3($name, 2, "BRAVIA set $name " . $a[1] . " " . $a[2]);	 
-	  SendCommand( $hash, "requestReboot" );
-	}
+	  # reboot
+    elsif ($a[1] eq "requestReboot") {	
+        Log3($name, 2, "BRAVIA set $name " . $a[1]);	 
+        SendCommand( $hash, "requestReboot" );
+	  }
 		
     # text
     elsif ( $a[1] eq "text" ) {
@@ -764,8 +766,6 @@ sub Set($@) {
         
         SendCommand( $hash, "text", $text );
     }
-
-
 
     # return usage hint
     else {
@@ -953,12 +953,6 @@ sub SendCommand($$;$$@) {
         $URL .= "/sony/appControl";
         $data = "{\"id\":2,\"method\":\"setTextForm\",\"version\":\"1.0\",\"params\":[\"".$cmd."\"]}";
       }
-    } elsif ($service eq "requestReboot") {		
-	  $URL .= $port->{SERVICE};
-	  if ($requestFormat eq "json") {
-		$URL .= "/sony/system";
-		$data = "{\"method\":\"requestReboot\",\"params\":[],\"id\":10,\"version\":\"1.0\"}";
-	  }
     } else {
       $URL .= $port->{SERVICE};
       if ($requestFormat eq "json") {
@@ -973,11 +967,6 @@ sub SendCommand($$;$$@) {
         }
       }
     }
-	
-	
-
-	
-	
 
     $timeout = AttrVal($name, "timeout", 0);
     if ($timeout !~ /^\d+$/ or $timeout == 0) {
