@@ -1,4 +1,4 @@
-# $Id: 70_BRAVIA.pm 20868 2020-01-02 15:34:22Z vuffiraa $
+# $Id: 70_BRAVIA.pm 21376 2020-03-08 09:22:57Z vuffiraa $
 ##############################################################################
 #
 #     70_BRAVIA.pm
@@ -749,13 +749,13 @@ sub Set($@) {
         readingsSingleUpdate( $hash, "upnp", $a[2], 1 )
            if ( ReadingsVal($name, "upnp", "") ne $a[2] );
     }
-    	
-	  # reboot
-    elsif ($a[1] eq "requestReboot") {	
-        Log3($name, 2, "BRAVIA set $name " . $a[1]);	 
+        
+      # reboot
+    elsif ($a[1] eq "requestReboot") {  
+        Log3($name, 2, "BRAVIA set $name " . $a[1]);     
         SendCommand( $hash, "requestReboot" );
-	  }
-		
+      }
+        
     # text
     elsif ( $a[1] eq "text" ) {
         return "No 2nd argument given" if ( !defined( $a[2] ) );
