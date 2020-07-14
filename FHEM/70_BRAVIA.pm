@@ -29,35 +29,7 @@
 #
 ##############################################################################
 
-package main;
-
-use strict;
-use warnings;
-
-use vars qw( $readingFnAttributes );
-
-###################################
-sub BRAVIA_Initialize($) {
-    my ($hash) = @_;
-
-    Log3($hash, 5, "BRAVIA_Initialize: Entering");
-
-    $hash->{GetFn}   = "BRAVIA::Get";
-    $hash->{SetFn}   = "BRAVIA::Set";
-    $hash->{DefFn}   = "BRAVIA::Define";
-    $hash->{UndefFn} = "BRAVIA::Undefine";
-
-    $hash->{AttrList} = "disable:0,1 macaddr:textField channelsMax:textField wolBroadcast:textField " . $readingFnAttributes;
-
-    $::data{RC_layout}{BRAVIA_SVG} = "BRAVIA::RClayout_SVG";
-    $::data{RC_layout}{BRAVIA}     = "BRAVIA::RClayout";
-
-    $::data{RC_makenotify}{BRAVIA} = "BRAVIA::RCmakenotify";
-
-    return;
-}
-
-package BRAVIA;
+package FHEM::BRAVIA;
 
 use strict;
 use warnings;
@@ -74,7 +46,7 @@ use MIME::Base64;
 use XML::Simple qw(:strict);
 use IO::Socket;
 
-require "HttpUtils.pm";
+require HttpUtils;
 
 ## Import der FHEM Funktionen
 BEGIN {
@@ -85,26 +57,53 @@ BEGIN {
         fhemTimeLocal
         InternalTimer
         InternalVal
-        readingsSingleUpdate
+        Log3
+        readingFnAttributes
+        ReadingsAge
+        readingsBeginUpdate
         readingsBulkUpdate
         readingsBulkUpdateIfChanged
-        readingsBeginUpdate
         readingsDelete
+        readingsSingleUpdate
         readingsEndUpdate
-        ReadingsAge
         ReadingsNum
         ReadingsTimestamp
         ReadingsVal
         RemoveInternalTimer
-        Log3
     ))
 };
 
-sub Set($@);
-sub Get($@);
-sub GetStatus($;$);
-sub Define($$);
-sub Undefine($$);
+GP_Export(
+    qw(
+      Initialize
+      )
+);
+
+###################################
+sub Initialize($) {
+    my ($hash) = @_;
+
+    Log3($hash, 5, "BRAVIA_Initialize: Entering");
+
+    $hash->{GetFn}   = \&Get;
+    $hash->{SetFn}   = \&Set;
+    $hash->{DefFn}   = \&Define;
+    $hash->{UndefFn} = \&Undefine;
+
+    $hash->{AttrList} =
+        "disable:0,1 "
+      . "macaddr:textField "
+      . "channelsMax:textField "
+      . "wolBroadcast:textField "
+      . $readingFnAttributes;
+
+    $::data{RC_layout}{BRAVIA_SVG} = \&RClayout_SVG;
+    $::data{RC_layout}{BRAVIA}     = \&RClayout;
+
+    $::data{RC_makenotify}{BRAVIA} = \&RCmakenotify;
+
+    return;
+}
 
 ###################################
 sub Define($$) {
@@ -155,7 +154,7 @@ sub Define($$) {
 
     # start the status update timer
     RemoveInternalTimer($hash);
-    InternalTimer( gettimeofday() + 2, "BRAVIA::GetStatus", $hash, 1 );
+    InternalTimer( gettimeofday() + 2, \&GetStatus, $hash, 1 );
 
     return;
 }
@@ -182,7 +181,7 @@ sub GetStatus($;$) {
     Log3($name, 5, "BRAVIA $name: called function GetStatus()");
 
     RemoveInternalTimer($hash);
-    InternalTimer( gettimeofday() + $interval, "BRAVIA::GetStatus", $hash, 0 );
+    InternalTimer( gettimeofday() + $interval, \&GetStatus, $hash, 0 );
 
     return if ( AttrVal($name, "disable", 0) == 1 );
 
@@ -1018,7 +1017,7 @@ sub SendCommand($$;$$@) {
             cmd         => $cmd,
             successor   => \@successor,
             timestamp   => $timestamp,
-            callback    => \&BRAVIA::ReceiveCommand,
+            callback    => \&ReceiveCommand,
         }
     );
 
