@@ -1558,8 +1558,7 @@ sub ProcessCommandData {
           foreach ( @{ $return->{result} } ) {
             foreach ( @{ $_ } ) {
               if ($_->{recordingStatus} eq "recording") {
-                my $key;
-                foreach $key ( keys %{ $_ }) {
+                foreach my $key ( keys %{ $_ }) {
                   if ( $key eq "type" ) {
                     $currentMedia = $_->{$key};
                     readingsBulkUpdateIfChanged( $hash, "input", $_->{$key} );
@@ -1605,8 +1604,7 @@ sub ProcessCommandData {
               my $channelNo;
               my $channelName;
               my $channelUri;
-              my $key;
-              foreach $key ( keys %{ $_ }) {
+              foreach my $key ( keys %{ $_ }) {
                 if ( $key eq "dispNum" ) {
                   $channelNo = $_->{$key};
                 } elsif ( $key eq "title" ) {
@@ -1641,9 +1639,8 @@ sub ProcessCommandData {
         if (ref($return->{result}) eq "ARRAY") {
           foreach ( @{ $return->{result} } ) {
             foreach ( @{ $_ } ) {
-              my $key;
               my $scheme = undef;
-              foreach $key ( keys %{ $_ }) {
+              foreach my $key ( keys %{ $_ }) {
                 if ( $key eq "scheme" ) {
                   $scheme = $_->{$key};
                 }
@@ -1667,9 +1664,8 @@ sub ProcessCommandData {
         if (ref($return->{result}) eq "ARRAY") {
           foreach ( @{ $return->{result} } ) {
             foreach ( @{ $_ } ) {
-              my $key;
               my $source = undef;
-              foreach $key ( keys %{ $_ }) {
+              foreach my $key ( keys %{ $_ }) {
                 if ( $key eq "source" ) {
                   $source = $_->{$key};
                 }
@@ -1694,8 +1690,7 @@ sub ProcessCommandData {
               my $inputName;
               my $inputLabel;
               my $inputUri;
-              my $key;
-              foreach $key ( keys %{ $_ }) {
+              foreach my $key ( keys %{ $_ }) {
                 if ( $key eq "uri" ) {
                   $inputUri = $_->{$key};
                 } elsif ( $key eq "title" ) {
@@ -1722,8 +1717,7 @@ sub ProcessCommandData {
             foreach ( @{ $_ } ) {
               my $appName;
               my $appUri;
-              my $key;
-              foreach $key ( keys %{ $_ }) {
+              foreach my $key ( keys %{ $_ }) {
                 if ( $key eq "uri" ) {
                   $appUri = $_->{$key};
                 } elsif ( $key eq "title" ) {
