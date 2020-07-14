@@ -207,7 +207,7 @@ sub Get {
     return "argument is missing" if ( int(@a) < 2 );
 
     $what = $a[1];
-    if ( $what =~ /^(power|presence|input|channel|volume|mute)$/ ) {
+    if ( $what =~ /^(power|presence|input|channel|volume|mute)$/xms ) {
         my $value = ReadingsVal($name, $what, "");
         if ($value ne "") {
             return $value;
@@ -383,7 +383,7 @@ sub Set {
 
         my $vol = $a[2];
         if ( $presence eq 'present' ) {
-            if ( $vol =~ m/^\d+$/ && $vol >= 1 && $vol <= 100 ) {
+            if ( $vol =~ m/^\d+$/xms && $vol >= 1 && $vol <= 100 ) {
                 $cmd = $vol;
             }
             else {
@@ -402,7 +402,7 @@ sub Set {
     }
 
     # volumeUp/volumeDown
-    elsif ( lc( $a[1] ) =~ /^(volumeup|volumedown)$/ ) {
+    elsif ( lc( $a[1] ) =~ /^(volumeup|volumedown)$/xms ) {
         Log3($name, 2, "BRAVIA set $name " . $a[1]);
 
         if ( $presence eq "present" ) {
@@ -514,13 +514,13 @@ sub Set {
 
         if ( $presence eq "present" ) {
             my $channelName = $channelStr;
-            if ( defined($hash->{helper}{device}{channelPreset}) && $channelName =~ /^(\d+).*$/ ) {
+            if ( defined($hash->{helper}{device}{channelPreset}) && $channelName =~ /^(\d+).*$/xms ) {
               if ( defined($hash->{helper}{device}{channelPreset}{$1}{uri}) ) {
                 SendCommand( $hash, "setPlayContent", $hash->{helper}{device}{channelPreset}{$1}{uri} );
                 return;
               }
             }
-            if ( $channelName =~ /^(\d)(\d?)(\d?)(\d?).*$/ ) {
+            if ( $channelName =~ /^(\d)(\d?)(\d?)(\d?).*$/xms ) {
               my @successor = ();
               push(@successor, ["ircc", $2]) if (defined($2));
               push(@successor, ["ircc", $3]) if (defined($3));
@@ -537,7 +537,7 @@ sub Set {
     }
 
     # channelUp/channelDown
-    elsif ( lc( $a[1] ) =~ /^(channelup|channeldown)$/ ) {
+    elsif ( lc( $a[1] ) =~ /^(channelup|channeldown)$/xms ) {
         Log3($name, 2, "BRAVIA set $name " . $a[1]);
 
         if ( $presence eq "present" ) {
@@ -641,10 +641,10 @@ sub Set {
         if ( $presence eq "present" ) {
             Log3($name, 2, "BRAVIA set $name " . $a[1] . " " . $a[2]);
             my $url = lc($a[2]);
-            if ($url !~ /^https?:\/\/.*/) {
+            if ($url !~ /^https?:\/\/.*/xms) {
                 $url = "http://$url";
             }
-            $url =~ s/([\x2F \x3A])/sprintf("%%%02X",ord($1))/eg;
+            $url =~ s/([\x2F \x3A])/sprintf("%%%02X",ord($1))/egxms;
             $url = "localapp://webappruntime?url=$url";
             Log3($name, 2, "BRAVIA set $name " . $a[1] . " " . $url);
             SendCommand( $hash, "setActiveApp", $url );
@@ -821,7 +821,7 @@ sub SendCommand {
       $data = GetIrccRequest($cmd);
     } elsif ($service eq "upnp") {
       my $value;
-      if ($cmd =~ m/^(.+):(\d+)$/) {
+      if ($cmd =~ m/^(.+):(\d+)$/xms) {
         $cmd = $1;
         $value = $2;
       }
@@ -884,7 +884,7 @@ sub SendCommand {
       if ($requestFormat eq "json") {
         my $source = $cmd;
         my $index = 0;
-        if ($cmd =~ /^(.*)\|(\d+)$/){
+        if ($cmd =~ /^(.*)\|(\d+)$/xms){
           $source = $1;
           $index = $2;
         }
@@ -980,7 +980,7 @@ sub SendCommand {
         $data = "{\"method\":\"".$service."\",\"params\":[],\"id\":1,\"version\":\"1.0\"}";
       } else {
         $URL .= "/cers";
-        if ($service =~ /^Mute.*$/) {
+        if ($service =~ /^Mute.*$/xms) {
           $URL .= "/command/".$service;
         } else {
           $URL .= "/api/" . $service;
@@ -989,7 +989,7 @@ sub SendCommand {
     }
 
     $timeout = AttrVal($name, "timeout", 0);
-    if ($timeout !~ /^\d+$/ or $timeout == 0) {
+    if ($timeout !~ /^\d+$/xms or $timeout == 0) {
       if ( $service eq "getStatus" ) {
         $timeout = 10;
       } else {
@@ -1095,7 +1095,7 @@ sub ReceiveCommand {
         LogSuccessors($hash, @successor);
 
         if ( $data ne "" ) {
-            if ( $data =~ /^<\?xml/ ) {
+            if ( $data =~ /^<\?xml/xms ) {
                 my $parser = XML::Simple->new(
                     NormaliseSpace => 2,
                     KeepRoot       => 0,
@@ -1116,7 +1116,7 @@ sub ReceiveCommand {
                 $return = $parser->XMLin( encode_utf8($data), KeyAttr => [ ] );
             }
 
-            elsif ( $data =~ /^{/ || $data =~ /^\[/ ) {
+            elsif ( $data =~ /^{/xms || $data =~ /^\[/xms ) {
                  if ( !defined($cmd) || ref($cmd) eq "HASH" || $cmd eq "" ) {
                     Log3($name, 4, "BRAVIA $name: RES $service - $data");
                 }
@@ -1141,7 +1141,7 @@ sub ReceiveCommand {
                 $return = "not found";
             }
 
-            elsif ( $data =~ /^<s:Envelope/ ) {
+            elsif ( $data =~ /^<s:Envelope/xms ) {
                 if ( !defined($cmd) ) {
                     Log3($name, 4, "BRAVIA $name: RES $service - response");
                 }
@@ -1188,9 +1188,9 @@ sub ReceiveCommand {
       # Set reading for state
       #
       my $currentState = ReadingsVal($name, "state", "");
-      if ( ( $currentState !~ /set_.*/ and $currentState ne $newstate )
+      if ( ( $currentState !~ /set_.*/xms and $currentState ne $newstate )
           or $currentState eq "set_".$newstate
-          or ($currentState =~ /set_.*/ and ReadingsAge($name, "state", 0) > 60) )
+          or ($currentState =~ /set_.*/xms and ReadingsAge($name, "state", 0) > 60) )
       {
           readingsBulkUpdate( $hash, "state", $newstate );
       }
@@ -1238,7 +1238,7 @@ sub wake {
 
     my $ip_addr = inet_aton($address);
     my $sock_addr = sockaddr_in( $port, $ip_addr );
-    $mac_addr =~ s/://g;
+    $mac_addr =~ s/://gxms;
     my $packet =
       pack( 'C6H*', 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, $mac_addr x 16 );
 
@@ -1295,7 +1295,7 @@ sub ProcessCommandData {
     
       my %statusKeys;
       foreach ( keys %{ $hash->{READINGS} } ) {
-        $statusKeys{$_} = 1 if ( $_ =~ /^s_.*/ && ReadingsVal($name, $_, "") ne "-" );
+        $statusKeys{$_} = 1 if ( $_ =~ /^s_.*/xms && ReadingsVal($name, $_, "") ne "-" );
       }
 
       readingsBeginUpdate($hash);
@@ -1420,7 +1420,7 @@ sub ProcessCommandData {
       my $currentMedia = "-";
       foreach ( keys %{ $hash->{READINGS} } ) {
         $contentKeys{$_} = 1
-            if ( $_ =~ /^ci_.*/ and ReadingsVal($name, $_, "") ne "-" );
+            if ( $_ =~ /^ci_.*/xms and ReadingsVal($name, $_, "") ne "-" );
       }
       if ( ref($return) eq "HASH" ) {
         $newstate = "on";
@@ -1471,7 +1471,7 @@ sub ProcessCommandData {
                 $uri = $return->{result}[0]{$_};
                 # set TV input uri to last tv-norm (tv:dvbt, tv:dvbs)
                 $hash->{helper}{device}{inputPreset}{TV}{uri} = $return->{result}[0]{$_}
-                    if (defined($hash->{helper}{device}{inputPreset}) && $return->{result}[0]{$_} =~ /tv:.*/);
+                    if (defined($hash->{helper}{device}{inputPreset}) && $return->{result}[0]{$_} =~ /tv:.*/xms);
               } else {
                 readingsBulkUpdateIfChanged( $hash, "ci_".$_, $return->{result}[0]{$_} );
                 delete $contentKeys{"ci_".$_};
@@ -1483,7 +1483,7 @@ sub ProcessCommandData {
               foreach ( keys %{$hash->{helper}{device}{inputPreset}} )  {
                 if ($hash->{helper}{device}{inputPreset}{$_}{uri} eq $uri) {
                   $input = $_;
-                  $input =~ s/#/ /g;
+                  $input =~ s/\#/ /gxms;
                   last;
                 }
               }
@@ -1547,7 +1547,7 @@ sub ProcessCommandData {
 
       foreach ( keys %{ $hash->{READINGS} } ) {
         $contentKeys{$_} = 1
-            if ( $_ =~ /^ci_.*/ and ReadingsVal($name, $_, "") ne "-" );
+            if ( $_ =~ /^ci_.*/xms and ReadingsVal($name, $_, "") ne "-" );
       }
       
       readingsBeginUpdate($hash);
@@ -1626,7 +1626,7 @@ sub ProcessCommandData {
       if (++$channelIndex % InternalVal($name, "CHANNELCOUNT", 50) == 0) {
         # try next junk of channels
         my $source = $cmd;
-        if ($cmd =~ /^(.*)\|(\d+)$/){
+        if ($cmd =~ /^(.*)\|(\d+)$/xms){
           $source = $1;
         }
         push(@$successor, ["getContentList", $source."|".$channelIndex]);
@@ -1670,7 +1670,7 @@ sub ProcessCommandData {
                   $source = $_->{$key};
                 }
               }
-              if (defined($source) and $source =~ /tv:dvb(.)/) {
+              if (defined($source) and $source =~ /tv:dvb(.)/xms) {
                 my $dvbName = GetNormalizedName("TV / DVB-".uc($1));
                 $hash->{helper}{device}{inputPreset}{$dvbName}{uri} = $source;
                 push(@$successor, ["getContentList", $source]);
@@ -1703,7 +1703,7 @@ sub ProcessCommandData {
             }
           }
           my $tvUri = ReadingsVal($name, "uri", "tv");
-          $tvUri = "tv" if ($tvUri !~ /tv.*/);
+          $tvUri = "tv" if ($tvUri !~ /tv.*/xms);
           $hash->{helper}{device}{inputPreset}{TV}{uri}  = $tvUri;
         }
       }
@@ -1742,7 +1742,7 @@ sub ProcessCommandData {
       foreach ( keys %{$hash->{helper}{device}{appPreset}} )  {
         if ($hash->{helper}{device}{appPreset}{$_}{uri} eq $cmd) {
           $appName = $_;
-          $appName =~ s/#/ /g;
+          $appName =~ s/\#/ /gxms;
           last;
         }
       }
@@ -1797,13 +1797,13 @@ sub ProcessCommandData {
         @$successor = ();
       } else {        
         readingsBeginUpdate($hash);
-        if ( $header =~ /auth=([A-Za-z0-9]+)/ ) {
+        if ( $header =~ /auth=([A-Za-z0-9]+)/xms ) {
           readingsBulkUpdate( $hash, "authCookie", $1 );
         }
-        if ( $header =~ /[Ee]xpires=([^;]+)/ ) {
+        if ( $header =~ /expires=([^;]+)/ixms ) {
           readingsBulkUpdate( $hash, "authExpires", $1 );
         }
-        if ( $header =~ /[Mm]ax-[Aa]ge=(\d+)/ ) {
+        if ( $header =~ /max-age=(\d+)/ixms ) {
           readingsBulkUpdateIfChanged( $hash, "authMaxAge", $1 );
         }
         readingsEndUpdate( $hash, 1 );
@@ -1829,7 +1829,7 @@ sub ClearContentInformation {
 
     #remove outdated content information - replaces by "-"
     foreach ( keys %{ $hash->{READINGS} } ) {
-      readingsBulkUpdateIfChanged($hash, $_, "-") if ( $_ =~ /^ci_.*/ );
+      readingsBulkUpdateIfChanged($hash, $_, "-") if ( $_ =~ /^ci_.*/xms );
     }
 
     readingsBulkUpdateIfChanged( $hash, "channel", "-" );
@@ -2215,7 +2215,7 @@ sub CheckRegistration {
   my $name = $hash->{NAME};
 
   if (ReadingsVal($name, "authCookie", "") ne "" and
-      ReadingsTimestamp($name, "authCookie", "") =~ m/^(\d{4})-(\d{2})-(\d{2}) ([0-2]\d):([0-5]\d):([0-5]\d)$/) {
+      ReadingsTimestamp($name, "authCookie", "") =~ m/^(\d{4})-(\d{2})-(\d{2}) ([0-2]\d):([0-5]\d):([0-5]\d)$/xms) {
 
     my $time = fhemTimeLocal($6, $5, $4, $3, $2 - 1, $1 - 1900);
     # max age defaults to 14 days
@@ -2267,10 +2267,10 @@ sub CheckServiceAvailable {
 
 sub GetNormalizedName {
   my ( $name ) = @_;
-  $name =~ s/^\s+//;
-  $name =~ s/\s+$//;
-  $name =~ s/\s/#/g;
-  $name =~ s/,/./g;
+  $name =~ s/^\s+//xms;
+  $name =~ s/\s+$//xms;
+  $name =~ s/\s/#/gxms;
+  $name =~ s/,/./gxms;
   return $name;
 }
 
