@@ -80,7 +80,7 @@ GP_Export(
 );
 
 ###################################
-sub Initialize($) {
+sub Initialize {
     my ($hash) = @_;
 
     Log3($hash, 5, "BRAVIA_Initialize: Entering");
@@ -106,7 +106,7 @@ sub Initialize($) {
 }
 
 ###################################
-sub Define($$) {
+sub Define {
     my ( $hash, $def ) = @_;
     my @a = split( "[ \t][ \t]*", $def );
     my $name = $hash->{NAME};
@@ -160,7 +160,7 @@ sub Define($$) {
 }
 
 ###################################
-sub Undefine($$) {
+sub Undefine {
     my ( $hash, $arg ) = @_;
     my $name = $hash->{NAME};
 
@@ -173,7 +173,7 @@ sub Undefine($$) {
 }
 
 #####################################
-sub GetStatus($;$) {
+sub GetStatus {
     my ( $hash, $update ) = @_;
     my $name     = $hash->{NAME};
     my $interval = $hash->{INTERVAL};
@@ -197,7 +197,7 @@ sub GetStatus($;$) {
 }
 
 ###################################
-sub Get($@) {
+sub Get {
     my ( $hash, @a ) = @_;
     my $name = $hash->{NAME};
     my $what;
@@ -224,7 +224,7 @@ sub Get($@) {
 }
 
 ###################################
-sub Set($@) {
+sub Set {
     my ( $hash, @a ) = @_;
     my $name  = $hash->{NAME};
     my $power = ReadingsVal($name, "power", "");
@@ -775,7 +775,7 @@ sub Set($@) {
 ############################################################################################################
 
 ###################################
-sub SendCommand($$;$$@) {
+sub SendCommand {
     my ( $hash, $service, $cmd, $param, @successor ) = @_;
     my $name        = $hash->{NAME};
     my $address     = $hash->{helper}{ADDRESS};
@@ -1025,7 +1025,7 @@ sub SendCommand($$;$$@) {
 }
 
 ###################################
-sub ReceiveCommand($$$) {
+sub ReceiveCommand {
     my ( $param, $err, $data ) = @_;
     my $hash      = $param->{hash};
     my $name      = $hash->{NAME};
@@ -1227,7 +1227,7 @@ sub ReceiveCommand($$$) {
 }
 
 ###################################
-sub wake ($$) {
+sub wake {
     my ( $name, $mac_addr ) = @_;
     my $address = AttrVal($name, 'wolBroadcast', '255.255.255.255');
     my $port = 9;
@@ -1254,7 +1254,7 @@ sub wake ($$) {
 
 ###################################
 # process return data
-sub ProcessCommandData ($$$) {
+sub ProcessCommandData {
 
     my ($param,$return,$successor) = @_;
     my $hash      = $param->{hash};
@@ -1826,7 +1826,7 @@ sub ProcessCommandData ($$$) {
 }
 
 #####################################
-sub ClearContentInformation ($) {
+sub ClearContentInformation {
 
     my ($hash)    = @_;
     my $name    = $hash->{NAME};
@@ -1848,7 +1848,7 @@ sub ClearContentInformation ($) {
     readingsEndUpdate( $hash, 1 );
 }
 
-sub FetchPresets($$) {
+sub FetchPresets {
   my ($hash,$successor)    = @_;
   my $name    = $hash->{NAME};
 
@@ -1867,7 +1867,7 @@ sub FetchPresets($$) {
   }
 }
 
-sub LogSuccessors($@) {
+sub LogSuccessors {
   my ($hash,@successor) = @_;
   my $name = $hash->{NAME};
 
@@ -1883,7 +1883,7 @@ sub LogSuccessors($@) {
 
 #####################################
 # Callback from 95_remotecontrol for command makenotify.
-sub RCmakenotify($$) {
+sub RCmakenotify {
     my ( $nam, $ndev ) = @_;
     my $nname = "notify_$nam";
 
@@ -1896,7 +1896,7 @@ sub RCmakenotify($$) {
 # RC layouts
 
 # Sony TV with SVG
-sub RClayout_SVG() {
+sub RClayout_SVG {
     my @row;
 
     $row[0] = "SOURCE:rc_AV.svg,:rc_BLANK.svg,:rc_BLANK.svg,POWER:rc_POWER.svg";
@@ -1928,7 +1928,7 @@ sub RClayout_SVG() {
 }
 
 # Sony TV with PNG
-sub RClayout() {
+sub RClayout {
     my @row;
 
     $row[0] = "SOURCE,:blank,:blank,POWER:POWEROFF";
@@ -2060,7 +2060,7 @@ sub RClayout() {
 # 755   <command name="BrowserReload" type="url" value="http://192.168.2.43:80/cers/command/BrowserReload" />
 # 755   <command name="BrowserStop" type="url" value="http://192.168.2.43:80/cers/command/BrowserStop" />
 # 755   <command name="BrowserBookmarkList" type="url" value="http://192.168.2.43:80/cers/command/BrowserBookmarkList" />
-sub GetRemotecontrolCommand($) {
+sub GetRemotecontrolCommand {
     my ($command) = @_;
     my $commands = {
         'POWER'       => "AAAAAQAAAAEAAAAVAw==",
@@ -2138,7 +2138,7 @@ sub GetRemotecontrolCommand($) {
     }
 }
 
-sub GetModelYear($) {
+sub GetModelYear {
     my ($command) = @_;
     my $commands = {
         '1.0'       => "2011",
@@ -2158,7 +2158,7 @@ sub GetModelYear($) {
     }
 }
 
-sub GetIrccRequest($) {
+sub GetIrccRequest {
     my ($cmd) = @_;
     my $data = "<?xml version=\"1.0\"?>";
     $data .= "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">";
@@ -2172,7 +2172,7 @@ sub GetIrccRequest($) {
     return $data;
 }
 
-sub GetUpnpRequest($$) {
+sub GetUpnpRequest {
     my ($cmd,$value) = @_;
     my $data = "<?xml version=\"1.0\"?>";
     $data .= "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">";
@@ -2210,7 +2210,7 @@ sub GetUpnpRequest($$) {
     return $data;
 }
 
-sub CheckRegistration($$$$@) {
+sub CheckRegistration {
   my ( $hash, $service, $cmd, $param, @successor ) = @_;
   my $name = $hash->{NAME};
 
@@ -2265,7 +2265,7 @@ sub CheckServiceAvailable {
   return 1;
 }
 
-sub GetNormalizedName($) {
+sub GetNormalizedName {
   my ( $name ) = @_;
   $name =~ s/^\s+//;
   $name =~ s/\s+$//;
