@@ -280,7 +280,7 @@ sub Set {
     }
     if ( $channel ne "" && $channel ne "-" && $channelId ne "-" ) {
         my $currentChannel = $channelId . ":" . $channel;
-        my @matches = grep("/".$currentChannel."/", @channels);
+        my @matches = grep {"/".$currentChannel."/"} @channels ;
         push( @channels, $currentChannel ) if ( ( scalar @matches ) eq "0" );
     }
     @channels = sort(@channels);
@@ -1160,7 +1160,7 @@ sub ReceiveCommand {
                     Log3($name, 5, "BRAVIA $name: RES ERROR $service/" . ::urlDecode($cmd) . "\n" . $data);
                 }
 
-                return undef;
+                return;
             }
         }
 
@@ -1232,7 +1232,7 @@ sub wake {
     my $address = AttrVal($name, 'wolBroadcast', '255.255.255.255');
     my $port = 9;
 
-    my $sock = new IO::Socket::INET( Proto => 'udp' )
+    my $sock = IO::Socket::INET->new( Proto => 'udp' )
       or die "socket : $!";
     die "Can't create WOL socket" if ( !$sock );
 
@@ -1846,6 +1846,8 @@ sub ClearContentInformation {
     readingsBulkUpdateIfChanged( $hash, "uri", "-" );
 
     readingsEndUpdate( $hash, 1 );
+
+    return;
 }
 
 sub FetchPresets {
@@ -1865,6 +1867,8 @@ sub FetchPresets {
             || !defined( $hash->{helper}{device}{appPreset} )
             || scalar( keys %{ $hash->{helper}{device}{appPreset} } ) == 0 );
   }
+
+  return;
 }
 
 sub LogSuccessors {
@@ -1879,6 +1883,8 @@ sub LogSuccessors {
     $msg .= join(",", map { defined($_) ? $_ : '' } @succ_item);
   }
   Log3($name, 4, $msg) if (@successor > 0);
+
+  return;
 }
 
 #####################################
