@@ -1057,7 +1057,7 @@ sub ReceiveCommand {
             if (
                 ( !defined( $hash->{helper}{AVAILABLE} ) )
                 or ( defined( $hash->{helper}{AVAILABLE} )
-                    and $hash->{helper}{AVAILABLE} eq 1 )
+                    and $hash->{helper}{AVAILABLE} == 1 )
               )
             {
                 $hash->{helper}{AVAILABLE} = 0;
@@ -1079,7 +1079,7 @@ sub ReceiveCommand {
         if (
             ( !defined( $hash->{helper}{AVAILABLE} ) )
             or ( defined( $hash->{helper}{AVAILABLE} )
-                and $hash->{helper}{AVAILABLE} eq 0 )
+                and $hash->{helper}{AVAILABLE} == 0 )
           )
         {
             $hash->{helper}{AVAILABLE} = 1;
@@ -1233,8 +1233,8 @@ sub wake {
     my $port = 9;
 
     my $sock = IO::Socket::INET->new( Proto => 'udp' )
-      or die "socket : $!";
-    die "Can't create WOL socket" if ( !$sock );
+      or die "socket : $!\n";
+    die "Can't create WOL socket\n" if ( !$sock );
 
     my $ip_addr = inet_aton($address);
     my $sock_addr = sockaddr_in( $port, $ip_addr );
@@ -1243,10 +1243,10 @@ sub wake {
       pack( 'C6H*', 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, $mac_addr x 16 );
 
     setsockopt( $sock, SOL_SOCKET, SO_BROADCAST, 1 )
-      or die "setsockopt : $!";
+      or die "setsockopt : $!\n";
 
     Log3($name, 4, "BRAVIA $name: Waking up by sending Wake-On-Lan magic packet to $mac_addr");
-    send( $sock, $packet, 0, $sock_addr ) or die "send : $!";
+    send( $sock, $packet, 0, $sock_addr ) or die "send : $!\n";
     close($sock);
 
     return;
