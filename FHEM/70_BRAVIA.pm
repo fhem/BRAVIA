@@ -1116,7 +1116,7 @@ sub ReceiveCommand {
                 $return = $parser->XMLin( encode_utf8($data), KeyAttr => [ ] );
             }
 
-            elsif ( $data =~ /^{/xms || $data =~ /^\[/xms ) {
+            elsif ( $data =~ /^\{/xms || $data =~ /^\[/xms ) {
                  if ( !defined($cmd) || ref($cmd) eq "HASH" || $cmd eq "" ) {
                     Log3($name, 4, "BRAVIA $name: RES $service - $data");
                 }
