@@ -1761,7 +1761,7 @@ sub ProcessCommandData {
               last;
             }
           }
-          %speaker = @{$return->{result}}[0] if (!%speaker && ${$return->{result}} > 0);
+          %speaker = %{@$elements[0]} if (!%speaker && $elements > 0);
           if (%speaker) {
             readingsBeginUpdate($hash);
             readingsBulkUpdateIfChanged( $hash, 'volume', $speaker{volume} );
