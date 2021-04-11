@@ -19,9 +19,10 @@ jobs:
         filename: controls_BRAVIA.txt 
     - name: update CHANGED
       run: |
-        LOG=$(date +"%Y-%m-%d") 
-        LOG+=" - $(git log -1 --pretty=%B)"
-        echo "$LOG" | cat - CHANGED > temp && mv temp CHANGED
+        git log --pretty="%as - %s" --invert-grep
+          --grep="Automatic updated controls and CHANGED"
+          --grep="Merge"
+          --grep="SVN upload" > CHANGED
     - name: git commit back
       run: |
         git config --global user.email "action@github.com"
