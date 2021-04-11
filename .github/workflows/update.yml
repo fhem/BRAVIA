@@ -25,7 +25,7 @@ jobs:
         GREP_AUTO_UPDATE="--grep='Automatic updated controls and CHANGED'"
         GREP_MERGE_BRANCH="--grep=Merge branch"
         GREP_SVN_UPLOAD="--grep='SVN upload'"
-        GREP_UPDATE_YML="grep=update.yml"
+        GREP_UPDATE_YML="--grep=update.yml"
         git log --pretty="%as - %s" --invert-grep ${GREP_AUTO_UPDATE} ${GREP_MERGE_BRANCH} ${GREP_SVN_UPLOAD} ${GREP_UPDATE_YML} > CHANGED
     - name: git commit back
       run: |
