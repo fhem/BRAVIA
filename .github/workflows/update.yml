@@ -22,11 +22,11 @@ jobs:
         filename: controls_BRAVIA.txt 
     - name: update CHANGED
       run: |
-        GREP_AUTO_UPDATE="--grep='Automatic updated controls and CHANGED'"
-        GREP_MERGE_BRANCH="--grep=Merge branch"
-        GREP_SVN_UPLOAD="--grep='SVN upload'"
-        GREP_UPDATE_YML="--grep=update.yml"
-        git log --pretty="%as - %s" --invert-grep ${GREP_AUTO_UPDATE} ${GREP_MERGE_BRANCH} ${GREP_SVN_UPLOAD} ${GREP_UPDATE_YML} > CHANGED
+        GREP_AUTO_UPDATE="Automatic updated controls and CHANGED"
+        GREP_MERGE_BRANCH="Merge branch"
+        GREP_SVN_UPLOAD="SVN upload"
+        GREP_UPDATE_YML="update.yml"
+        git log --pretty="%as - %s" --invert-grep --grep="$GREP_AUTO_UPDATE" --grep="$GREP_MERGE_BRANCH" --grep="$GREP_SVN_UPLOAD" --grep="$GREP_UPDATE_YML" > CHANGED
     - name: git commit back
       run: |
         git config --global user.email "action@github.com"
