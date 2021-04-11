@@ -18,7 +18,7 @@ jobs:
       with:
         filename: controls_BRAVIA.txt 
     - name: update CHANGED
-      run: |
+      run: >-
         git log --pretty="%as - %s" --invert-grep
           --grep="Automatic updated controls and CHANGED"
           --grep="Merge"
