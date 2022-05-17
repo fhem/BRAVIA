@@ -1,17 +1,30 @@
-2021-04-11 - Merge branch 'master' into dev
-2021-04-11 - SVN upload
-2021-01-24 - Merge branch 'master' into dev
-2021-01-24 - SVN upload
+2021-04-11 - fix registration renewal
 2021-01-14 - fix volume info from headphone
 2020-11-16 - escape curly bracket in regexp
 2020-07-14 - PBP: modifier with regular expressions
-2020-07-02 - Merge branch 'master' into dev
-2020-07-02 - SVN upload: getSupportedApiInfo if available
+2020-07-14 - PBP: other issues
+2020-07-14 - PBP: Lexical loop variables
+2020-07-14 - PBP: return statement, indirect object syntax
+2020-07-14 - PBP: subroutine prototypes
+2020-07-14 - renamed package FHEM::BRAVIA
 2020-07-02 - trigger getSupportedApiInfo if available only
-2020-06-16 - Merge branch 'master' into dev
-2020-06-16 - SVN upload: use audio service instead of upnp
 2020-06-16 - use audio service instead of upnp
-2020-06-06 - Merge branch 'master' into dev
-2020-06-06 - SVN upload: fix register procedure
-2020-06-06 - Merge branch 'dev'
 2020-06-06 - setup github workflow
+2020-06-06 - fix register procedure
+2020-03-08 - Update controls_BRAVIA.txt
+2020-03-07 - add documentation "requestReboot"
+2020-03-07 - optimize "requestReboot"
+2020-03-05 - add "requestReboot"
+2020-01-06 - Merge commit 'f295750a00051fdc980d76eddf46253e90228fc7' into dev
+2020-01-06 - Update README.pm
+2020-01-01 - Update controls_BRAVIA.txt
+2019-12-31 - Add attribute wolBroadcast
+2019-12-31 - Add attribute wolBroadcast
+2019-12-31 - Adopt README for dev branch
+2019-12-30 - Upload latest version from SVN
+2019-12-30 - Merge pull request #1 from fhem/add-license-1
+2019-12-30 - Create LICENSE
+2019-12-20 - Update README.md
+2019-12-20 - Create README.md
+2019-12-20 - Rename BRAVIA/70_BRAVIA.pm to BRAVIA/FHEM/70_BRAVIA.pm
+2019-12-20 - Rename 70_BRAVIA.pm to BRAVIA/70_BRAVIA.pm
